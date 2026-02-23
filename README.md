@@ -1,182 +1,160 @@
-# Secure Notes
+# 🔐 Secure Notes  
+### Production-Deployed Full Stack Authentication App
 
-Full stack web application for secure note management.
-
-This project demonstrates modern web development practices including authentication, REST APIs, database integration, and responsive UI design.
-
----
-
-## Overview
-
-Secure Notes allows users to:
-
-- Create an account
-- Log in securely
-- Create, edit and delete personal notes
-- Search notes instantly
-- Access protected routes using JWT authentication
-
-The application is built as a complete client-server architecture.
+A secure full stack notes application built with React, Node.js, and PostgreSQL.  
+Users can register, log in, and manage private notes stored in a production database.
 
 ---
 
-## Tech Stack
+## 🌍 Live Demo
+
+- **Frontend:** https://secure-notes-vert.vercel.app  
+- **Backend API:** https://secure-notes-hq99.onrender.com  
+  _(API only – root route intentionally not implemented)_
+
+---
+
+## 📌 Overview
+
+Secure Notes is a production-ready authentication-based web application demonstrating:
+
+- JWT-based authentication
+- Secure password hashing (bcrypt)
+- User-isolated database queries
+- Multi-service cloud deployment
+- Environment-based configuration
+- Real production debugging
+
+The application is deployed across three independent services:
+
+- **Frontend:** Vercel  
+- **Backend API:** Render  
+- **Database:** Neon (Serverless PostgreSQL)
+
+---
+
+## 🏗 Architecture
+
+
+Client (React – Vercel)
+↓
+REST API (Express – Render)
+↓
+PostgreSQL (Neon)
+
+
+The frontend communicates with the backend using Axios.  
+The backend connects securely to Neon using SSL and environment variables.
+
+---
+
+## 🧱 Tech Stack
 
 ### Frontend
 - React (Vite)
-- React Router
 - Axios
+- React Router
 - Tailwind CSS
 
 ### Backend
 - Node.js
-- Express.js
-- PostgreSQL
-- JWT (JSON Web Token)
-- bcrypt (password hashing)
-- dotenv
+- Express
+- PostgreSQL (pg)
+- JSON Web Tokens (JWT)
+- bcrypt
+
+### Infrastructure
+- Vercel (Frontend hosting)
+- Render (Backend hosting)
+- Neon (Serverless PostgreSQL)
 
 ---
 
-## Architecture
+## 🔐 Authentication Flow
 
-The project is divided into two main parts:
+1. User registers
+2. Password is hashed using bcrypt
+3. User logs in
+4. Backend validates credentials
+5. JWT token is issued
+6. Token stored in localStorage
+7. Protected routes require token verification
+8. Notes are fetched using authenticated user ID
 
-- secure-notes-client (frontend)
-- secure-notes-api (backend)
-
-The frontend communicates with the backend through REST API endpoints.
-
-Authentication is handled using JWT tokens stored in localStorage and sent via Authorization headers.
-
----
-
-## Security Features
-
-- Passwords are hashed using bcrypt before being stored in the database
-- JWT-based authentication for protected routes
-- Middleware-based route protection
-- Environment variables for sensitive configuration
-- Parameterized SQL queries to prevent SQL injection
+Each query is scoped by `user_id` to ensure data isolation.
 
 ---
 
-## Features
+## 🗄 Database Schema
 
-### Authentication
-- User registration
-- Login with email and password
-- Token-based session management
-- Protected notes endpoint
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-### Notes Management (CRUD)
-- Create notes
-- Read notes
-- Update notes
-- Delete notes
+CREATE TABLE notes (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT,
+  content TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+⚙️ Environment-Based Configuration
 
-### UI & UX
-- Responsive layout
-- Loading states
-- Error handling feedback
-- Clean card-based design
-- Search functionality
-- Disabled save button when no changes detected
+The backend automatically detects environment:
 
----
+Uses DATABASE_URL in production
 
-## API Endpoints
+Falls back to localhost configuration in development
 
-### Authentication
+SSL enabled for Neon
 
-POST /auth/register  
-POST /auth/login  
+Secrets managed via environment variables
 
-### Notes
+Example production variables:
 
-GET /notes  
-POST /notes  
-PUT /notes/:id  
-DELETE /notes/:id  
+DATABASE_URL=your_neon_connection_string
+JWT_SECRET=your_secret_key
+NODE_ENV=production
 
-All /notes routes require a valid JWT token.
+Frontend (Vercel):
 
----
+VITE_API_URL=https://secure-notes-hq99.onrender.com
+🧠 Production Challenges Solved
 
-## Database
+This project involved debugging real deployment issues:
 
-PostgreSQL is used for data persistence.
+Database schema mismatch in production
 
-### Tables
+Missing password_hash column
 
-users  
-- id  
-- email  
-- password_hash  
+Localhost vs production API URL mismatch
 
-notes  
-- id  
-- title  
-- content  
-- user_id  
+Incorrect environment variable configuration
 
-Each note is linked to a specific user.
+PostgreSQL SSL configuration
 
----
+500 / 404 / 400 error tracing via logs
 
-## Running the Project Locally
+Testing queries directly in Neon SQL Editor
 
-### Backend
+All issues were resolved by aligning backend queries with the production schema and properly configuring environment variables across services.
 
-1. Navigate to the API folder:
-   cd secure-notes-api
+📊 What This Project Demonstrates
 
-2. Install dependencies:
-   npm install
+Full stack architecture design
 
-3. Create a .env file:
-   DATABASE_URL=your_database_url  
-   JWT_SECRET=your_secret_key
+Secure authentication implementation
 
-4. Start server:
-   npm run dev
+Production database configuration
 
-Server runs on:
-http://localhost:5000
+Multi-platform cloud deployment
 
----
+Environment separation (dev vs prod)
 
-### Frontend
+Reading and debugging production logs
 
-1. Navigate to the client folder:
-   cd secure-notes-client
-
-2. Install dependencies:
-   npm install
-
-3. Start development server:
-   npm run dev
-
-App runs on:
-http://localhost:5173
-
----
-
-## What This Project Demonstrates
-
-- Full stack application structure
-- Client-server communication
-- Authentication flow
-- Secure password handling
-- REST API design
-- Database integration
-- State management in React
-- Conditional rendering
-- Error handling
-- Real-world project structure suitable for deployment
-
----
-
-## Author
-
-Petros Pieskä
+Handling real-world deployment errors
