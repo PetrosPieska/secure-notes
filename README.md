@@ -6,6 +6,16 @@ Users can register, log in, and manage private notes stored in a production data
 
 ---
 
+## Why I Built This
+
+I built Secure Notes intentionally to challenge myself with a full production-ready stack that commonly appears in modern job listings. 
+
+My goal was not just to make it work locally, but to deploy it, handle real authentication logic, and debug production-level issues. 
+
+This project helped me understand the difference between “it works on my machine” and building something that survives real-world configuration and edge cases.
+
+---
+
 ## 🌍 Live Demo
 
 - **Frontend:** https://secure-notes-vert.vercel.app  
