@@ -18,8 +18,9 @@ router.post("/register", async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  console.error("REGISTER ERROR:", err);
+  res.status(500).json({ message: "Server error" });
+}
 });
 
 //login route
@@ -52,8 +53,9 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  console.error("LOGIN ERROR:", err);
+  res.status(500).json({ message: "Server error" });
+}
 });
 
 module.exports = router;
